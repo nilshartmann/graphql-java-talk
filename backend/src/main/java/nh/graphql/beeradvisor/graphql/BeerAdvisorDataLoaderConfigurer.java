@@ -19,8 +19,7 @@ public class BeerAdvisorDataLoaderConfigurer {
         this.ratingDataFetchers = ratingDataFetchers;
     }
 
-    public DataLoaderRegistry configureDataLoader(Optional<DataLoaderRegistry> dataLoaderRegistryCandidate) {
-        final DataLoaderRegistry dataLoaderRegistry = dataLoaderRegistryCandidate.orElse(new DataLoaderRegistry());
+    public DataLoaderRegistry configureDataLoader(DataLoaderRegistry dataLoaderRegistry) {
         DataLoader dl = DataLoader.newDataLoader(ratingDataFetchers.userBatchLoader);
         dataLoaderRegistry.register("user", dl);
 

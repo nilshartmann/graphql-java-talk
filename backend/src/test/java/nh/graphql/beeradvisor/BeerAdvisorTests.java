@@ -6,6 +6,7 @@ import graphql.schema.GraphQLSchema;
 import nh.graphql.beeradvisor.auth.User;
 import nh.graphql.beeradvisor.auth.UserService;
 import nh.graphql.beeradvisor.graphql.BeerAdvisorDataLoaderConfigurer;
+import org.dataloader.DataLoaderRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -154,7 +155,7 @@ public class BeerAdvisorTests {
 
         ExecutionInput executionInput =
             ExecutionInput.newExecutionInput()
-                .dataLoaderRegistry(dataLoaderConfigurer.configureDataLoader(Optional.empty()))
+                .dataLoaderRegistry(dataLoaderConfigurer.configureDataLoader(new DataLoaderRegistry()))
                 .query
                     ("query " + q).build();
 

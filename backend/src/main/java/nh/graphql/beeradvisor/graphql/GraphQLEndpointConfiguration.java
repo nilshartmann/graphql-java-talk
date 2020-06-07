@@ -1,9 +1,17 @@
 package nh.graphql.beeradvisor.graphql;
 
+import graphql.kickstart.execution.BatchedDataLoaderGraphQLBuilder;
+import graphql.kickstart.execution.GraphQLInvoker;
+import graphql.kickstart.execution.GraphQLObjectMapper;
+import graphql.kickstart.execution.GraphQLQueryInvoker;
+import graphql.kickstart.execution.config.GraphQLBuilder;
+import graphql.kickstart.execution.context.GraphQLContext;
+import graphql.kickstart.servlet.GraphQLConfiguration;
+import graphql.kickstart.servlet.GraphQLHttpServlet;
+import graphql.kickstart.servlet.GraphQLWebsocketServlet;
+import graphql.kickstart.servlet.context.DefaultGraphQLServletContextBuilder;
+import graphql.kickstart.servlet.input.GraphQLInvocationInputFactory;
 import graphql.schema.GraphQLSchema;
-import graphql.servlet.*;
-import org.dataloader.DataLoader;
-import org.dataloader.DataLoaderRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -19,6 +27,7 @@ import javax.websocket.HandshakeResponse;
 import javax.websocket.Session;
 import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerEndpointConfig;
+import java.util.Optional;
 
 /**
  * This configuration requires graphql-java-servlet
@@ -29,7 +38,7 @@ import javax.websocket.server.ServerEndpointConfig;
 @Configuration
 public class GraphQLEndpointConfiguration {
 
-    class BeerAdvisorContextBuilder extends DefaultGraphQLContextBuilder {
+    class BeerAdvisorContextBuilder extends DefaultGraphQLServletContextBuilder {
 
         private final BeerAdvisorDataLoaderConfigurer dataLoaderConfigurer;
 
@@ -37,9 +46,14 @@ public class GraphQLEndpointConfiguration {
             this.dataLoaderConfigurer = dataLoaderConfigurer;
         }
 
+
+
         private GraphQLContext setupDataLoaderRegistry(final GraphQLContext context) {
-            final DataLoaderRegistry dataLoaderRegistry = dataLoaderConfigurer.configureDataLoader(context.getDataLoaderRegistry());
-            context.setDataLoaderRegistry(dataLoaderRegistry);
+            final var dataLoaderRegistry = context.getDataLoaderRegistry()
+                .orElseThrow(() -> new IllegalStateException("DataLoaderRegistry must be set!"));
+
+            dataLoaderConfigurer.configureDataLoader(dataLoaderRegistry);
+
             return context;
         }
 
@@ -67,30 +81,30 @@ public class GraphQLEndpointConfiguration {
     @Bean
     ServletRegistrationBean<GraphQLHttpServlet> graphQLServletRegistrationBean(GraphQLSchema schema, BeerAdvisorDataLoaderConfigurer dataLoaderConfigurer) {
 
-        GraphQLConfiguration config = GraphQLConfiguration.with(schema).with(new BeerAdvisorContextBuilder(dataLoaderConfigurer)).build();
+        GraphQLConfiguration config = GraphQLConfiguration
+            .with(schema)
+            .with(new BeerAdvisorContextBuilder(dataLoaderConfigurer))
+            .build();
 
         return new ServletRegistrationBean<>(GraphQLHttpServlet.with(config), "/graphql");
-
-//        return new ServletRegistrationBean<>(GraphQLHttpServlet.with(
-//            GraphQLConfiguration.with(
-//
-//            ).build()
-//
-//        )with(schema)
-//            .
-//            , "/graphql");
     }
 
     // --- WEB SOCKET (for Subscriptions) ---------------------------------------------------------------------------
     @Bean
     public ServerEndpointRegistration serverEndpointRegistration(GraphQLSchema schema, BeerAdvisorDataLoaderConfigurer dataLoaderConfigurer) {
-        final DefaultGraphQLSchemaProvider schemaProvider = new DefaultGraphQLSchemaProvider(schema);
-        final GraphQLQueryInvoker queryInvoker = GraphQLQueryInvoker.newBuilder(). build();
+        final GraphQLQueryInvoker queryInvoker = GraphQLQueryInvoker.newBuilder().build();
 
-        final GraphQLInvocationInputFactory graphQLInvocationInputFactory = GraphQLInvocationInputFactory.newBuilder(schemaProvider).withGraphQLContextBuilder(new BeerAdvisorContextBuilder(dataLoaderConfigurer)).build();
+        final GraphQLInvocationInputFactory graphQLInvocationInputFactory = GraphQLInvocationInputFactory
+            .newBuilder(schema)
+            .withGraphQLContextBuilder(new BeerAdvisorContextBuilder(dataLoaderConfigurer))
+            .build();
 
 
-        final GraphQLWebsocketServlet websocketServlet = new GraphQLWebsocketServlet(queryInvoker, graphQLInvocationInputFactory, GraphQLObjectMapper.newBuilder().build());
+        final GraphQLWebsocketServlet websocketServlet = new GraphQLWebsocketServlet(
+            new GraphQLInvoker(new GraphQLBuilder(), new BatchedDataLoaderGraphQLBuilder(null)),
+            graphQLInvocationInputFactory,
+            GraphQLObjectMapper.newBuilder().build()
+        );
         return new GraphQLWsServerEndpointRegistration("/subscriptions", websocketServlet);
     }
 
