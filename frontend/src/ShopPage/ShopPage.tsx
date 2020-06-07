@@ -1,10 +1,8 @@
-import * as React from "react";
-import { RouteComponentProps } from "react-router";
-
-import gql from "graphql-tag";
 import { QueryResult } from "@apollo/react-common";
 import { useQuery } from "@apollo/react-hooks";
-
+import gql from "graphql-tag";
+import * as React from "react";
+import { RouteComponentProps } from "react-router";
 import { ShopPageQuery, ShopPageQueryVariables } from "./querytypes/ShopPageQuery";
 import Shop from "./Shop";
 
@@ -33,7 +31,7 @@ type ShopPageQueryResult = QueryResult<ShopPageQuery, ShopPageQueryVariables>;
 
 export default function ShopPage({ match, history }: ShopPageProps) {
   const { data, loading, error }: ShopPageQueryResult = useQuery(SHOP_PAGE_QUERY, {
-    variables: { shopId: match.params.shopId }
+    variables: { shopId: match.params.shopId },
   });
 
   if (loading) {
@@ -48,5 +46,5 @@ export default function ShopPage({ match, history }: ShopPageProps) {
     return <h1>No data ?</h1>;
   }
 
-  return <Shop shop={data.shop} onBeerClick={beerId => history.push(`/beer/${beerId}`)} />;
+  return <Shop shop={data.shop} onBeerClick={(beerId) => history.push(`/beer/${beerId}`)} />;
 }

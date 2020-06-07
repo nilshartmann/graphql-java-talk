@@ -1,13 +1,11 @@
-import * as React from "react";
-
-import { BrowserRouter as Router, Route } from "react-router-dom";
-
-import styles from "./BeerRatingApp.module.scss";
-import Header from "./Header";
 import BeerPage from "BeerPage";
-import Footer from "./Footer";
 import { OverviewPage } from "OverviewPage";
+import * as React from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import ShopPage from "ShopPage";
+import styles from "./BeerRatingApp.module.scss";
+import Footer from "./Footer";
+import Header from "./Header";
 
 class BeerRatingApp extends React.Component {
   render() {

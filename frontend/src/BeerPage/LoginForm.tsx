@@ -12,7 +12,7 @@ interface LoginFormState {
 
 export default class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
   readonly state: LoginFormState = {
-    userId: ""
+    userId: "",
   };
 
   onUserIdChange = (e: React.SyntheticEvent<HTMLInputElement>) => {
@@ -45,7 +45,7 @@ export default class LoginForm extends React.Component<LoginFormProps, LoginForm
                 type="text"
                 value={userId}
                 onChange={this.onUserIdChange}
-                onKeyPress={e => (e.keyCode === 13 ? this.onLoginClick(e) : null)}
+                onKeyPress={(e) => (e.keyCode === 13 ? this.onLoginClick(e) : null)}
               />
             </div>
             {error && <div>Could not login: {error}</div>}

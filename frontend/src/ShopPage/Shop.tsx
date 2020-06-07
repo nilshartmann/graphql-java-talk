@@ -32,7 +32,7 @@ export default function Shop({ shop, onBeerClick }: ShopProps) {
           <h1>what's in stock</h1>
 
           <div className={styles.Beers}>
-            {shop.beers.map(b => (
+            {shop.beers.map((b) => (
               <div key={b.id} className={styles.Beer} onClick={() => onBeerClick(b.id)}>
                 {b.name}
               </div>

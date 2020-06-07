@@ -1,18 +1,8 @@
-import * as React from "react";
-import { withApollo } from "@apollo/react-hoc";
-import { ApolloClient } from "apollo-client";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-
-interface AuthInfoState {
-  auth: {
-    userId: string;
-    username: string;
-  };
-}
-
-interface AuthErrorState {
-  error: string;
-}
+import { LoginMutation, LoginMutationVariables } from "querytypes/LoginMutation";
+import * as React from "react";
+import { assertValidData, AuthErrorState, AuthInfoState } from "types";
 
 interface IAuthContext {
   auth: AuthInfoState | AuthErrorState | null;
@@ -21,22 +11,18 @@ interface IAuthContext {
 
 const AuthContext = React.createContext<IAuthContext>({
   auth: null,
-  login() {}
+  login() {},
 });
 
 const getAuthToken = () => sessionStorage.getItem("auth-token");
 const setAuthToken = (authToken: string | null) =>
   authToken ? sessionStorage.setItem("auth-token", authToken) : sessionStorage.removeItem("auth-token");
 
-interface AuthProviderProps {
-  client: ApolloClient<any>;
-}
-
 interface AuthProviderState {
   auth: AuthInfoState | AuthErrorState | null;
 }
 
-const LoginMutation = gql`
+const LOGIN_MUTATION = gql`
   mutation LoginMutation($username: String!) {
     login(username: $username) {
       authentication {
@@ -49,73 +35,89 @@ const LoginMutation = gql`
   }
 `;
 
-class AuthProvider extends React.Component<AuthProviderProps, AuthProviderState> {
-  readonly state: AuthProviderState = {
-    auth: null
-  };
+function useLoginMutation() {
+  const [login] = useMutation<LoginMutation, LoginMutationVariables>(LOGIN_MUTATION);
 
-  login = async (loginId: string) => {
-    const { client } = this.props;
-    setAuthToken(null);
-
-    const loginResult = await client.mutate({
-      mutation: LoginMutation,
-      variables: {
-        username: loginId
-      }
-    });
-
-    if (!loginResult.data) {
-      this.setState({
-        auth: {
-          error: `Could not authenticate (${loginResult.errors})`
-        }
+  const doLogin = React.useCallback(
+    (loginId: string) => {
+      return login({
+        variables: {
+          username: loginId,
+        },
       });
-      return;
-    }
+    },
+    [login]
+  );
 
-    const { error, authentication } = loginResult.data.login;
-
-    if (error) {
-      this.setState({
-        auth: {
-          error: `Could not authenticate (${error})`
-        }
-      });
-      return;
-    }
-
-    setAuthToken(authentication.authToken);
-
-    this.setState({
-      auth: {
-        auth: {
-          userId: authentication.userId,
-          username: authentication.username
-        }
-      }
-    });
-  };
-
-  render() {
-    return (
-      <AuthContext.Provider
-        value={{
-          auth: this.state.auth,
-          login: this.login
-        }}
-      >
-        {this.props.children}
-      </AuthContext.Provider>
-    );
-  }
+  return doLogin;
 }
 
-const AuthProviderWithGraphQL = withApollo<{}>(AuthProvider);
+type AuthProviderProps = {
+  children: React.ReactElement;
+};
+
+function AuthProvider({ children }: AuthProviderProps) {
+  const loginMutation = useLoginMutation();
+  const [authState, setAuthState] = React.useState<AuthProviderState>({
+    auth: null,
+  });
+
+  const login = React.useCallback(
+    async function login(loginId: string) {
+      setAuthToken(null);
+
+      const loginResult = await loginMutation(loginId);
+      if (!loginResult.data) {
+        setAuthState({
+          auth: {
+            error: `Could not authenticate (${loginResult.errors})`,
+          },
+        });
+        return;
+      }
+
+      const { error, authentication } = loginResult.data.login;
+
+      if (error) {
+        setAuthState({
+          auth: {
+            error: `Could not authenticate (${error})`,
+          },
+        });
+        return;
+      }
+
+      assertValidData(authentication);
+
+      setAuthToken(authentication.authToken);
+
+      setAuthState({
+        auth: {
+          auth: {
+            userId: authentication.userId,
+            username: authentication.username,
+          },
+        },
+      });
+    },
+    [loginMutation]
+  );
+
+  return (
+    <AuthContext.Provider
+      value={{
+        auth: authState.auth,
+        login: login,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
 
 function useAuthContext() {
   const authContext = React.useContext(AuthContext);
   return authContext;
 }
 
-export { AuthProviderWithGraphQL as AuthProvider, useAuthContext, setAuthToken, getAuthToken };
+export { AuthProvider, useAuthContext, setAuthToken, getAuthToken };

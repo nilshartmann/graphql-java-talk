@@ -1,27 +1,26 @@
-import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
-import { split } from "apollo-link";
-import { HttpLink } from "apollo-link-http";
+import { ApolloClient } from "apollo-client";
+import { ApolloLink, split } from "apollo-link";
 import { setContext } from "apollo-link-context";
 import { onError } from "apollo-link-error";
-import { ApolloLink } from "apollo-link";
-import { setAuthToken, getAuthToken } from "./AuthContext";
+import { HttpLink } from "apollo-link-http";
 import { WebSocketLink } from "apollo-link-ws";
 import { getMainDefinition } from "apollo-utilities";
+import { getAuthToken, setAuthToken } from "./AuthContext";
 
 const isLocalDev = window.location.hostname === "localhost";
 
 export default function createApolloClient() {
   const httpLink = new HttpLink({
     uri: isLocalDev ? "http://localhost:9000/graphql" : "/graphql",
-    credentials: "include"
+    credentials: "include",
   });
 
   const wsLink = new WebSocketLink({
     uri: isLocalDev ? "ws://localhost:9000/subscriptions" : `ws://${window.location.host}/subscriptions`,
     options: {
-      reconnect: true
-    }
+      reconnect: true,
+    },
   });
 
   // using the ability to split links, you can send data to each link
@@ -55,8 +54,8 @@ export default function createApolloClient() {
       return {
         headers: {
           ...headers,
-          authorization: `Bearer ${token}`
-        }
+          authorization: `Bearer ${token}`,
+        },
       };
     }
     return headers;
@@ -64,7 +63,7 @@ export default function createApolloClient() {
 
   const client = new ApolloClient({
     link: ApolloLink.from([errorLink, authLink, remoteLink]),
-    cache: new InMemoryCache()
+    cache: new InMemoryCache(),
   });
 
   return client;

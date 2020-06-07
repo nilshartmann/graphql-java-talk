@@ -1,6 +1,6 @@
 import * as React from "react";
-import styles from "./Form.module.scss";
 import { NewRating } from "../types";
+import styles from "./Form.module.scss";
 
 interface RatingFormProps {
   beerName: string;
@@ -18,7 +18,7 @@ interface RatingFormState {
 export default class RatingForm extends React.Component<RatingFormProps, RatingFormState> {
   readonly state: RatingFormState = {
     comment: "",
-    stars: ""
+    stars: "",
   };
 
   onCommentChange = (e: React.SyntheticEvent<HTMLInputElement>) => {
@@ -38,7 +38,7 @@ export default class RatingForm extends React.Component<RatingFormProps, RatingF
     onNewRating({ comment, stars });
     this.setState({
       comment: "",
-      stars: ""
+      stars: "",
     });
   };
 

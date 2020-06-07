@@ -1,12 +1,9 @@
-import * as React from "react";
-import gql from "graphql-tag";
-import { Query } from "@apollo/react-components";
-import { OverviewPageQuery as OverviewPageQueryResult } from "./querytypes/OverviewPageQuery";
-
-import styles from "./OverviewPage.module.scss";
-import Stars from "../components";
-import { RouteComponentProps } from "react-router";
 import { useQuery } from "@apollo/react-hooks";
+import gql from "graphql-tag";
+import * as React from "react";
+import { RouteComponentProps } from "react-router";
+import Stars from "../components";
+import styles from "./OverviewPage.module.scss";
 
 const OVERVIEW_PAGE_QUERY = gql`
   query OverviewPageQuery {

@@ -1,15 +1,17 @@
-import * as React from "react";
-
-import { MutationFunction, MutationResult } from "@apollo/react-common";
+import { useMutation } from "@apollo/react-hooks";
+import { DataProxy } from "apollo-cache";
+import { useAuthContext } from "AuthContext";
 import gql from "graphql-tag";
+import * as React from "react";
+import { assertValidAuth, NewRating } from "types";
+import LoginForm from "./LoginForm";
 import {
   AddRatingMutation as AddRatingMutationResult,
+  AddRatingMutationVariables,
   AddRatingMutation_addRating,
-  AddRatingMutationVariables
 } from "./querytypes/AddRatingMutation";
-import { Mutation } from "@apollo/react-components";
-import { DataProxy } from "apollo-cache";
 import { RatingsFragment, RatingsFragment_ratings } from "./querytypes/RatingsFragment";
+import RatingForm from "./RatingForm";
 
 const ADD_RATING_MUTATION = gql`
   mutation AddRatingMutation($input: AddRatingInput!) {
@@ -37,7 +39,7 @@ const BEER_RATINGS_FRAGMENT = gql`
 `;
 
 function mergeRatings(ratings: RatingsFragment_ratings[], newRating: AddRatingMutation_addRating) {
-  if (ratings.find(r => r.id === newRating.id)) {
+  if (ratings.find((r) => r.id === newRating.id)) {
     // rating already contained in list
     return ratings;
   }
@@ -45,7 +47,7 @@ function mergeRatings(ratings: RatingsFragment_ratings[], newRating: AddRatingMu
   return [...ratings, newRating];
 }
 
-function updateBeerCacheWithNewRating(cache: DataProxy, data: AddRatingMutationResult | undefined) {
+function updateBeerCacheWithNewRating(cache: DataProxy, data: AddRatingMutationResult | null | undefined) {
   if (!data) {
     return;
   }
@@ -53,32 +55,58 @@ function updateBeerCacheWithNewRating(cache: DataProxy, data: AddRatingMutationR
   const cacheId = `Beer:${data.addRating.beer.id}`;
   const existingBeerInCache = cache.readFragment<RatingsFragment>({
     id: cacheId,
-    fragment: BEER_RATINGS_FRAGMENT
+    fragment: BEER_RATINGS_FRAGMENT,
   });
 
   const newRatings = mergeRatings(existingBeerInCache!.ratings, data.addRating);
   cache.writeFragment({
     id: cacheId,
     fragment: BEER_RATINGS_FRAGMENT,
-    data: { ...existingBeerInCache, ratings: newRatings }
+    data: { ...existingBeerInCache, ratings: newRatings },
   });
 }
 
-type AddRatingMutationProps = {
-  children: (
-    mutateFn: MutationFunction<AddRatingMutationResult, AddRatingMutationVariables>,
-    result: MutationResult<AddRatingMutationResult>
-  ) => JSX.Element | null;
-  beerId: string;
+type AddRatingProps = {
+  id: string;
+  beerName: string;
 };
 
-export default function AddRating({ children }: AddRatingMutationProps) {
+export default function AddRating({ id, beerName }: AddRatingProps) {
+  const { auth, login } = useAuthContext();
+
+  const [addNewRating, { error }] = useMutation<AddRatingMutationResult, AddRatingMutationVariables>(ADD_RATING_MUTATION);
+
+  function handleOnNewRating({ comment, stars }: NewRating) {
+    assertValidAuth(auth);
+    addNewRating({
+      update: (cache, { data }) => updateBeerCacheWithNewRating(cache, data),
+      variables: {
+        input: {
+          userId: auth.auth.userId,
+          stars: parseInt(stars),
+          comment,
+          beerId: id,
+        },
+      },
+    });
+  }
+
   return (
-    <Mutation<AddRatingMutationResult, AddRatingMutationVariables>
-      mutation={ADD_RATING_MUTATION}
-      update={(cache, { data }) => updateBeerCacheWithNewRating(cache, data)}
-    >
-      {children}
-    </Mutation>
+    <>
+      <h1>
+        ...and what do <em>you</em> think?
+      </h1>
+      {auth === null || "error" in auth ? (
+        <LoginForm login={login} error={auth && auth.error} />
+      ) : (
+        <RatingForm
+          beerId={id}
+          username={auth.auth.username}
+          beerName={beerName}
+          error={error ? "" + error : null}
+          onNewRating={handleOnNewRating}
+        />
+      )}
+    </>
   );
 }

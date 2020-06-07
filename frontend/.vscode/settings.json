@@ -1,10 +1,4 @@
 {
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    { "language": "typescript", "autoFix": true },
-    { "language": "typescriptreact", "autoFix": true }
-  ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "files.exclude": {
     "**/.classpath": true,
@@ -15,7 +9,9 @@
     "yarn-error.log": true,
     "node_modules": true,
     "yarn.lock": true,
-    "querytypes": true
+    ".p*": true,
+    ".e*": true,
+    ".gitignore": true,
   },
   "eslint.packageManager": "yarn"
 }

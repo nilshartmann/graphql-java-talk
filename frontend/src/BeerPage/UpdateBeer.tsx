@@ -1,10 +1,11 @@
-import React from "react";
-import { BeerPageQuery_beer } from "./querytypes/BeerPageQuery";
-import { useAuthContext } from "AuthContext";
-import styles from "./Form.module.scss";
-import gql from "graphql-tag";
 import { useMutation } from "@apollo/react-hooks";
+import { useAuthContext } from "AuthContext";
+import gql from "graphql-tag";
+import React from "react";
+import styles from "./Form.module.scss";
+import { BeerPageQuery_beer } from "./querytypes/BeerPageQuery";
 import { UpdateBeerNameMutation, UpdateBeerNameMutationVariables } from "./querytypes/UpdateBeerNameMutation";
+import { isValidAuth } from "types";
 
 type UpdateBeerProps = {
   beer: BeerPageQuery_beer;
@@ -29,20 +30,21 @@ export default function UpdateBeer({ beer }: UpdateBeerProps) {
     updateBeerName({
       variables: {
         beerId: beer.id,
-        newName: newBeerName
-      }
+        newName: newBeerName,
+      },
     });
   }
 
-  if (!auth || !("auth" in auth) || !(auth.auth.username === "Nils")) {
+  if (!isValidAuth(auth) || !(auth.auth.username === "Nils")) {
     return null;
   }
 
   // we don't care about error handling here
-  console.log("error", error);
+  if (error) console.log("error", error);
 
   // we don't care about the result here => it's just used for demo purposes
-  console.log("data", data);
+  if (data) console.log("data", data);
+
   return <UpdateBeerForm beername={beer.name} onNewBeerName={onBeerNameChange} />;
 }
 
@@ -59,12 +61,12 @@ function UpdateBeerForm({ beername, onNewBeerName }: UpdateBeerFormProps) {
       <form>
         <fieldset>
           <div>
-            <label>New name:</label> <input type="text" value={newName} onChange={e => setNewName(e.currentTarget.value)} />
+            <label>New name:</label> <input type="text" value={newName} onChange={(e) => setNewName(e.currentTarget.value)} />
           </div>
         </fieldset>
         <div>
           <button
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault();
               onNewBeerName(newName);
             }}

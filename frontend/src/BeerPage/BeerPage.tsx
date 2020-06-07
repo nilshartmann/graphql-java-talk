@@ -1,10 +1,10 @@
+import { QueryResult } from "@apollo/react-common";
+import { useQuery } from "@apollo/react-hooks";
+import Beer from "BeerPage/Beer";
+import gql from "graphql-tag";
 import React from "react";
 import { RouteComponentProps } from "react-router-dom";
-
-import gql from "graphql-tag";
-import { useQuery } from "@apollo/react-hooks";
-import { QueryResult } from "@apollo/react-common";
-import Beer from "BeerPage/Beer";
+import { assertValidData } from "types";
 import { BeerPageQuery, BeerPageQueryVariables } from "./querytypes/BeerPageQuery";
 import { RatingSubscription as RatingSubscriptionResult } from "./querytypes/RatingSubscription";
 import UpdateBeer from "./UpdateBeer";
@@ -58,7 +58,7 @@ export default function BeerPage({ history, match }: BeerPageProps) {
   const variables = { beerId: match.params.beerId };
   const { loading, error, data, subscribeToMore }: BeerPageQueryResult = useQuery(BEER_PAGE_QUERY, {
     variables,
-    fetchPolicy: "cache-and-network"
+    fetchPolicy: "cache-and-network",
   });
 
   if (loading) {
@@ -69,7 +69,9 @@ export default function BeerPage({ history, match }: BeerPageProps) {
     return <h1>Error! {error.message}</h1>;
   }
 
-  const { beer } = data!;
+  assertValidData(data);
+
+  const { beer } = data;
 
   if (beer === null) {
     //
@@ -80,7 +82,7 @@ export default function BeerPage({ history, match }: BeerPageProps) {
     <div>
       <Beer
         beer={beer}
-        onShopClicked={newShopId => history.push(`/shop/${newShopId}`)}
+        onShopClicked={(newShopId) => history.push(`/shop/${newShopId}`)}
         subscribeToNewData={() =>
           subscribeToMore({
             document: RATING_SUBSCRIPTION,
@@ -95,10 +97,10 @@ export default function BeerPage({ history, match }: BeerPageProps) {
               return {
                 beer: {
                   ...prev.beer,
-                  ratings: newRatings
-                }
+                  ratings: newRatings,
+                },
               };
-            }
+            },
           })
         }
       />
