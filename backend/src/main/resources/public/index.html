@@ -30,18 +30,22 @@
       }
     </style>
 
-    <script src="/graphiql/es6-promise.auto.min.js"></script>
-    <script src="/graphiql/fetch.min.js"></script>
-    <script src="/graphiql/react.min.js"></script>
-    <script src="/graphiql/react-dom.min.js"></script>
-
+    <!-- https://github.com/graphql/graphiql/tree/master/packages/graphiql#cdn-bundle -->
     <link rel="stylesheet" href="/graphiql/graphiql.min.css"/>
-    <script src="/graphiql/graphiql.min.js"></script>
     <!-- https://unpkg.com/subscriptions-transport-ws@0.8.3/browser/client.js -->
     <script src="/graphiql/subscriptions-transport-ws-0.8.3.js"></script>
     <!-- https://unpkg.com/graphiql-subscriptions-fetcher@0.0.2/browser/client.js -->
     <script src="/graphiql/graphiql-subscriptions-fetcher-0.0.2.js"></script>
 
+    <script
+        src="/graphiql/react.production.min.js"
+    ></script>
+    <script
+        src="/graphiql/react-dom.production.min.js"
+    ></script>
+    <script
+        src="/graphiql/graphiql.min.js"
+    ></script>
   </head>
 
   <body>
@@ -50,7 +54,7 @@
         <h2>Beer Advisor GraphiQL</h2>
         <label>Login: </label>
         <input id="loginInput" type="text" name="login"
-               onkeypress="if (event.keyCode == 13) {doLogin(); return false; }"/>
+               onkeypress="if (event.keyCode === 13) {doLogin(); return false; }"/>
         <button type="button" onclick="doLogin()">Login</button>
         <p>(Users: waldemar, karl, alessa, lauren, nils)</p>
         <p id="loginError"></p>

@@ -32,30 +32,17 @@ Prerequisites:
 
 **Step 2: run either the frontend using stable Apollo APIs _OR_ the one using the unstable Apollo Hook API**
 
-Step 2a: Install, build and start the frontend (_stable_ Apollo API)
-
-This version uses the stable Apollo React Client:
+Step 2a: Install, build and start the frontend (Apollo 2.x with Hooks API)
 
 1. Open a new terminal inside the `frontend` folder
 2. Install the npm packages: `yarn install`
 3. Start the webpack web server: `yarn start`
 4. The webserver now should listen on http://localhost:9080
 
-Step 2b: Install, build and start the hooks-based frontend
-
-This version uses the stable React Hooks API (16.8) and the **unstable** [Apollo Hooks](https://github.com/apollographql/react-apollo/tree/release-3.0.0/packages/hooks) API.
-
-1. Open a new terminal inside the `frontend-hooks` folder
-2. Install the npm packages: `yarn install`
-3. Start the webpack web server: `yarn start`
-4. The webserver now should listen on http://localhost:9080
-
-(You can find examples of Apollo Hooks in `BeerPage.tsx`, `ShopPage.tsx` and `UpdateBeer.tsx`)
-
 Now everything runs. You can open in your browser:
 
 - http://localhost:9080 for the demo application frontend
-- http://localhost:9000/graphiql.html for the [GraphiQL](https://github.com/graphql/graphiql) API Explorer
+- http://localhost:9000 for the [GraphiQL](https://github.com/graphql/graphiql) API Explorer
 
 Enjoy! 💐
 
@@ -73,4 +60,4 @@ You can also find my Spring PetClinic fork that works with GraphQL on a Spring-b
 
 I've written a (german) article about GraphQL, React and TypeScript that uses this example application in the iX newspaper. You can read the article [here online](https://www.heise.de/select/ix/2019/6/1909808311106276205) (Note: behind paywall).
 
-You can find even more of my articles, talks and workshops about GraphQL [here](https://nilshartmann.net/posts/graphql-workshop-und-vortraege/) (in german only)
+You can find even more of my articles, talks and workshops about GraphQL [here](https://nilshartmann.net/tags/GraphQL) (in german only)
