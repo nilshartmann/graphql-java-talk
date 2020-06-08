@@ -1,11 +1,13 @@
 package nh.graphql.beeradvisor.graphql;
 
+import graphql.GraphQLError;
 import graphql.kickstart.execution.BatchedDataLoaderGraphQLBuilder;
 import graphql.kickstart.execution.GraphQLInvoker;
 import graphql.kickstart.execution.GraphQLObjectMapper;
 import graphql.kickstart.execution.GraphQLQueryInvoker;
 import graphql.kickstart.execution.config.GraphQLBuilder;
 import graphql.kickstart.execution.context.GraphQLContext;
+import graphql.kickstart.execution.error.DefaultGraphQLErrorHandler;
 import graphql.kickstart.servlet.GraphQLConfiguration;
 import graphql.kickstart.servlet.GraphQLHttpServlet;
 import graphql.kickstart.servlet.GraphQLWebsocketServlet;
@@ -27,6 +29,7 @@ import javax.websocket.HandshakeResponse;
 import javax.websocket.Session;
 import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerEndpointConfig;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -83,6 +86,9 @@ public class GraphQLEndpointConfiguration {
 
         GraphQLConfiguration config = GraphQLConfiguration
             .with(schema)
+            .with(GraphQLObjectMapper.newBuilder()
+                .withGraphQLErrorHandler(new MyDefaultGraphQLErrorHandler())
+                .build())
             .with(new BeerAdvisorContextBuilder(dataLoaderConfigurer))
             .build();
 
@@ -103,7 +109,9 @@ public class GraphQLEndpointConfiguration {
         final GraphQLWebsocketServlet websocketServlet = new GraphQLWebsocketServlet(
             new GraphQLInvoker(new GraphQLBuilder(), new BatchedDataLoaderGraphQLBuilder(null)),
             graphQLInvocationInputFactory,
-            GraphQLObjectMapper.newBuilder().build()
+            GraphQLObjectMapper.newBuilder()
+                .withGraphQLErrorHandler(new MyDefaultGraphQLErrorHandler())
+                .build()
         );
         return new GraphQLWsServerEndpointRegistration("/subscriptions", websocketServlet);
     }
@@ -141,6 +149,15 @@ public class GraphQLEndpointConfiguration {
         @Override
         public boolean isRunning() {
             return !servlet.isShutDown();
+        }
+    }
+
+    class MyDefaultGraphQLErrorHandler extends DefaultGraphQLErrorHandler {
+        @Override
+        protected boolean isClientError(GraphQLError error) {
+            // For demonstration: include ALL errors in 'errors' field
+            // (graphql-servlet otherwise filters some out)
+            return true;
         }
     }
 }
