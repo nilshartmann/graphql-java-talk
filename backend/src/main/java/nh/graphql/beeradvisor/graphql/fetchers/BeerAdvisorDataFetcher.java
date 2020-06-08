@@ -1,7 +1,10 @@
 package nh.graphql.beeradvisor.graphql.fetchers;
 
+import graphql.schema.AsyncDataFetcher;
 import graphql.schema.DataFetcher;
+import graphql.schema.DataFetchingEnvironment;
 import nh.graphql.beeradvisor.domain.*;
+import nh.graphql.beeradvisor.graphql.Utils;
 import nh.graphql.beeradvisor.graphql.subscription.RatingPublisher;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Nils Hartmann (nils@nilshartmann.net)
@@ -25,7 +29,7 @@ public class BeerAdvisorDataFetcher {
     private final RatingService ratingService;
     private final RatingPublisher ratingPublisher;
 
-	public BeerAdvisorDataFetcher(BeerRepository beerRepository, BeerService beerService, ShopRepository shopRepository, RatingService ratingService, RatingPublisher ratingPublisher) {
+    public BeerAdvisorDataFetcher(BeerRepository beerRepository, BeerService beerService, ShopRepository shopRepository, RatingService ratingService, RatingPublisher ratingPublisher) {
 		this.beerRepository = beerRepository;
 		this.beerService = beerService;
 		this.shopRepository = shopRepository;
@@ -33,11 +37,12 @@ public class BeerAdvisorDataFetcher {
 		this.ratingPublisher = ratingPublisher;
 	}
 
-	public DataFetcher<Beer> beerFetcher() {
-        return environment -> {
+	public DataFetcher beerFetcher() {
+        return Utils.wrap(environment -> {
+            Utils.slowDown(environment);
             String beerId = environment.getArgument("beerId");
             return beerRepository.getBeer(beerId);
-        };
+        });
     }
 
     public DataFetcher<List<Beer>> beersFetcher() {
@@ -54,11 +59,14 @@ public class BeerAdvisorDataFetcher {
 	}
 
     public DataFetcher shopFetcher() {
-        return environment -> {
+        return Utils.wrap(environment -> {
+            Utils.slowDown(environment);
             String shopId = environment.getArgument("shopId");
             return shopRepository.findShop(shopId);
-        };
+        });
     }
+
+
 
     public DataFetcher shopsFetcher() {
         return environment -> shopRepository.findAll();

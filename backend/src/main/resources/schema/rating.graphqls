@@ -50,6 +50,15 @@ type Beer {
 # (For testing/demo purposes only)
 directive @skipDataLoader on FIELD | FRAGMENT_DEFINITION | FRAGMENT_SPREAD | INLINE_FRAGMENT | QUERY
 
+# Can be added to 'beers' and 'shops' fields to simulate very slow request processing
+# (For testing/demo purposes only)
+directive @slowDown on FIELD | FRAGMENT_DEFINITION | FRAGMENT_SPREAD | INLINE_FRAGMENT | QUERY
+
+# Can be added to 'beers' and 'shops' fields to simulate run as async fetchers
+# (For testing/demo purposes only)
+directive @async on FIELD | FRAGMENT_DEFINITION | FRAGMENT_SPREAD | INLINE_FRAGMENT | QUERY
+
+
 type Query {
   # Returns a specific beer, identified by its id
   beer(beerId: ID!): Beer
