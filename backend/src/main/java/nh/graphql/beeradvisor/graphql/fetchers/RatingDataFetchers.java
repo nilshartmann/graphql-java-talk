@@ -38,10 +38,10 @@ public class RatingDataFetchers {
     public DataFetcher authorFetcher() {
         return environment -> {
             Rating rating = environment.getSource();
-            boolean skipDataLoader = environment.getField().getDirective("skipDataLoader") != null;
+            boolean useDataLoader = environment.getField().getDirective("useDataLoader") != null;
             final String userId = rating.getUserId();
 
-            if (skipDataLoader) {
+            if (!useDataLoader) {
                 logger.info("Reading user (author) with id '{}' WITHOUT DataLoader", userId);
                 return userService.getUser(userId);
             }

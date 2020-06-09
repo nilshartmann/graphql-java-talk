@@ -107,7 +107,7 @@ public class BeerAdvisorTests {
         Map<String, Object> result = query("{\n" +
             "  beer(beerId: \"B1\") {\n" +
             "    ratings {\n" +
-            "      author {\n" +
+            "      author @useDataLoader {\n" +
             "        id login name\n" +
             "      }\n" +
             "    }\n" +
@@ -132,7 +132,7 @@ public class BeerAdvisorTests {
         Map<String, Object> result = query("{\n" +
             "  beer(beerId: \"B1\") {\n" +
             "    ratings {\n" +
-            "      author @skipDataLoader {\n" +
+            "      author {\n" +
             "        id login name\n" +
             "      }\n" +
             "    }\n" +
