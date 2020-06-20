@@ -14,31 +14,32 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 public class BeerAdvisorApplication {
 
-  /**
-   * Keeps the session open until the end of a request. Allows us to use
-   * lazy-loading with Hibernate.
-   */
-  @Bean
-  public OpenEntityManagerInViewFilter openEntityManagerInViewFilter() {
-    return new OpenEntityManagerInViewFilter();
-  }
+    /**
+     * Keeps the session open until the end of a request. Allows us to use
+     * lazy-loading with Hibernate.
+     */
+    @Bean
+    public OpenEntityManagerInViewFilter openEntityManagerInViewFilter() {
+        return new OpenEntityManagerInViewFilter();
+    }
 
-  @Bean
-  public FilterRegistrationBean<CorsFilter> corsFilter() {
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    CorsConfiguration config = new CorsConfiguration();
-    config.setAllowCredentials(true);
-    config.addAllowedOrigin("http://localhost:9080");
-    config.addAllowedHeader("*");
-    config.addAllowedMethod("*");
-    source.registerCorsConfiguration("/**", config);
-    FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<CorsFilter>(new CorsFilter(source));
-    bean.setOrder(0);
-    return bean;
-  }
+    @Bean
+    public FilterRegistrationBean<CorsFilter> corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:9080");
+        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<CorsFilter>(new CorsFilter(source));
+        bean.setOrder(0);
+        return bean;
+    }
 
 
-  public static void main(String[] args) {
-    SpringApplication.run(BeerAdvisorApplication.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(BeerAdvisorApplication.class, args);
+    }
 }

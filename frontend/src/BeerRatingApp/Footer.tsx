@@ -1,7 +1,7 @@
 import * as React from "react";
 import styles from "./Footer.module.scss";
 
-const GITHUB_REPO = "https://github.com/nilshartmann/graphql-examples";
+const GITHUB_REPO = "https://github.com/nilshartmann/graphql-java-talk";
 
 const Footer = () => (
   <footer className={styles.Footer}>
