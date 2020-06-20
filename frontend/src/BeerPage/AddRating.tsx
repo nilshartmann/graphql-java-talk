@@ -11,7 +11,7 @@ import {
   AddRatingMutation_addRating,
 } from "./querytypes/AddRatingMutation";
 import { RatingsFragment, RatingsFragment_ratings } from "./querytypes/RatingsFragment";
-import RatingForm from "./RatingForm";
+import AddRatingForm from "./AddRatingForm";
 
 const ADD_RATING_MUTATION = gql`
   mutation AddRatingMutation($input: AddRatingInput!) {
@@ -99,7 +99,7 @@ export default function AddRating({ id, beerName }: AddRatingProps) {
       {auth === null || "error" in auth ? (
         <LoginForm login={login} error={auth && auth.error} />
       ) : (
-        <RatingForm
+        <AddRatingForm
           beerId={id}
           username={auth.auth.username}
           beerName={beerName}
