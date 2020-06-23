@@ -49,6 +49,7 @@ export interface ShopPageQuery_shop {
    *  The name of the shop
    */
   name: string;
+  openingHours: string;
   /**
    *  Address of the shop
    */

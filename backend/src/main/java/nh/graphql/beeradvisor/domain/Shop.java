@@ -27,6 +27,8 @@ public class Shop {
   private String city;
   @NotNull
   private String country;
+  @NotNull
+  private String openingHours;
 
   @ElementCollection
   private List<String> beers;
@@ -36,13 +38,14 @@ public class Shop {
   }
 
   public Shop(String id, String name, String street, String postalCode, String city, String country,
-      String... beerIds) {
+              String openingHours, String... beerIds) {
     this.id = id;
     this.name = name;
     this.street = street;
     this.postalCode = postalCode;
     this.city = city;
     this.country = country;
+    this.openingHours = openingHours;
     this.beers = Arrays.asList(beerIds).stream().map(String::trim).collect(toList());
   }
 
@@ -73,4 +76,8 @@ public class Shop {
   public List<String> getBeers() {
     return beers;
   }
+
+    public String getOpeningHours() {
+        return openingHours;
+    }
 }
