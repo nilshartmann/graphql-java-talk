@@ -1,5 +1,5 @@
 import React from "react";
-import { ShopPageQuery_shop } from "./querytypes/ShopPageQuery";
+import { ShopPageQuery_shop, ShopPageQuery_shop_address } from "./querytypes/ShopPageQuery";
 import styles from "./ShopPage.module.scss";
 
 type ShopProps = {
@@ -14,20 +14,8 @@ export default function Shop({ shop, onBeerClick }: ShopProps) {
         <h1>{shop.name}</h1>
       </div>
       <div style={{ display: "flex" }}>
-        <div style={{ marginRight: "50px" }}>
-          <div className={styles.Title}>
-            <h1>where to find</h1>
-          </div>
-          <div>
-            <div className={styles.Address}>
-              {shop.address.street}
-              <br />
-              {shop.address.postalCode} {shop.address.city}
-              <br />
-              {shop.address.country}
-            </div>
-          </div>
-        </div>
+        <WhereToFind address={shop.address} />
+
         <div className={styles.Title}>
           <h1>what's in stock</h1>
 
@@ -38,6 +26,26 @@ export default function Shop({ shop, onBeerClick }: ShopProps) {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type WhereToFindProps = { address: ShopPageQuery_shop_address };
+function WhereToFind({ address }: WhereToFindProps) {
+  return (
+    <div style={{ marginRight: "50px" }}>
+      <div className={styles.Title}>
+        <h1>where to find</h1>
+      </div>
+      <div>
+        <div className={styles.Address}>
+          {address.street}
+          <br />
+          {address.postalCode} {address.city}
+          <br />
+          {address.country}
         </div>
       </div>
     </div>
