@@ -50,8 +50,8 @@ import static graphql.execution.instrumentation.SimpleInstrumentationContext.whe
  *
  * @author Nils Hartmann (nils@nilshartmann.net)
  */
-@ConditionalOnWebApplication
-@Configuration
+//@ConditionalOnWebApplication
+//@Configuration
 public class GraphQLEndpointConfiguration {
 
     class BeerAdvisorContextBuilder extends DefaultGraphQLServletContextBuilder {

@@ -12,7 +12,7 @@ import org.springframework.web.filter.CorsFilter;
 
 @SpringBootApplication
 @Configuration
-public class BeerAdvisorApplication {
+public class BeerAdvisorGraphQLJavaToolsApplication {
 
     /**
      * Keeps the session open until the end of a request. Allows us to use
@@ -40,6 +40,6 @@ public class BeerAdvisorApplication {
 
 
     public static void main(String[] args) {
-        SpringApplication.run(BeerAdvisorApplication.class, args);
+        SpringApplication.run(BeerAdvisorGraphQLJavaToolsApplication.class, args);
     }
 }

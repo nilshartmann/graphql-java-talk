@@ -24,7 +24,6 @@ import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
 /**
  * @author Nils Hartmann (nils@nilshartmann.net)
  */
-@Configuration
 public class BeerAdvisorGraphQLConfiguration {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
