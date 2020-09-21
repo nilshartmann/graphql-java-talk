@@ -5,7 +5,6 @@ import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 import nh.graphql.beeradvisor.auth.User;
 import nh.graphql.beeradvisor.auth.UserService;
-import nh.graphql.beeradvisor.graphql.BeerAdvisorDataLoaderConfigurer;
 import org.dataloader.DataLoaderRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,10 +17,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static nh.graphql.beeradvisor.Utils.listOf;

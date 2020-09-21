@@ -1,11 +1,9 @@
 package nh.graphql.beeradvisor.graphql.resolver;
 
 import graphql.kickstart.tools.GraphQLResolver;
-import graphql.schema.DataFetcher;
 import nh.graphql.beeradvisor.domain.Beer;
 import nh.graphql.beeradvisor.domain.BeerRepository;
 import nh.graphql.beeradvisor.domain.Shop;
-import nh.graphql.beeradvisor.graphql.fetchers.AddressField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

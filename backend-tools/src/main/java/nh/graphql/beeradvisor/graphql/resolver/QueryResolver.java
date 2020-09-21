@@ -1,11 +1,7 @@
 package nh.graphql.beeradvisor.graphql.resolver;
 
 import graphql.kickstart.tools.GraphQLQueryResolver;
-import graphql.schema.DataFetcher;
 import nh.graphql.beeradvisor.domain.*;
-import nh.graphql.beeradvisor.graphql.fetchers.BeerAdvisorDataFetcher;
-import nh.graphql.beeradvisor.graphql.subscription.RatingPublisher;
-import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

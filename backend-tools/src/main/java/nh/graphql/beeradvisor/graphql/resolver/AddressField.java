@@ -1,4 +1,4 @@
-package nh.graphql.beeradvisor.graphql.fetchers;
+package nh.graphql.beeradvisor.graphql.resolver;
 
 import nh.graphql.beeradvisor.domain.Shop;
 
