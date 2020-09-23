@@ -3,6 +3,7 @@
 This repository contains a very simple GraphQL example application, using the following technology stack:
 
 - [graphql-java](https://www.graphql-java.com/)
+- [graphql-java-tools](https://www.graphql-java-kickstart.com/tools/)
 - [Spring Boot](https://spring.io/guides/gs/spring-boot/)
 - [React](https://reactjs.org/)
 - [TypeScript](https://www.typescriptlang.org/)
@@ -18,21 +19,32 @@ Prerequisites:
 - Port 9080 must be available for the frontend webserver
 - You need to have installed Java/JDK 11 for the backend and `yarn` for the frontend build and dependency management (`npm` might also work)
 
-**Step 1: Build and start the backend**
-
-1. Open a terminal inside the `backend` folder
-2. Run `./gradlew bootRun` to start the Spring Boot-based application.
-3. The application now should listen on port 9000.
-
-**Step 2: Build and start the user microservice**
+**Step 1: Build and start the user microservice**
 
 1. Open a terminal inside the `userservice` folder
 2. Run `./gradlew bootRun` to start the Spring Boot-based REST userservice.
 3. The service now should listen on port 9020.
 
-**Step 2: run either the frontend using stable Apollo APIs _OR_ the one using the unstable Apollo Hook API**
+Now start either the `graphql-java`-based Backend **or** the `graphq-java-tools`-based backend:
 
-Step 2a: Install, build and start the frontend (Apollo 2.x with Hooks API)
+**Step 2: Option 1: Build and start the `graphql-java` backend**
+
+1. Open a terminal inside the `backend` folder
+2. Run `./gradlew bootRun` to start the Spring Boot-based application.
+3. The application now should listen on port 9000.
+
+**OR:**
+
+**Step 2: Option 2: Build and start the `graphql-java-tools` backend**
+
+1. Open a terminal inside the `backend-tools` folder
+2. Run `./gradlew bootRun` to start the Spring Boot-based application.
+3. The application now should listen on port 9000.
+
+Note that the `graphql-java-tools`-based backend does not use `DataLoader`s currently.
+
+
+**Step 3: Install, build and start the frontend (Apollo 2.x with Hooks API)**
 
 1. Open a new terminal inside the `frontend` folder
 2. Install the npm packages: `yarn install`
