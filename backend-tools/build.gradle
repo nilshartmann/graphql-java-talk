@@ -46,6 +46,6 @@ dependencies {
   compile "io.reactivex.rxjava2:rxjava:2.1.5"
 
   // GraphQL java-tools
-  implementation 'com.graphql-java-kickstart:graphql-spring-boot-starter:7.0.1'
+  implementation 'com.graphql-java-kickstart:graphql-spring-boot-starter:8.0.0'
 }
 
