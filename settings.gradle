@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'graphql-java-example'
-include 'backend', 'backend-tools', 'userservice', 'frontend'
+include 'backend', 'backend-tools', 'backend-spring-graphql', 'userservice', 'frontend'

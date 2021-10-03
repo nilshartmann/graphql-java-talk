@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8"/>
+    <title>🍺 BEER ADVISOR - GraphiQL</title>
+    <meta name="robots" content="noindex"/>
+    <style>
+      body {
+        height: 100%;
+        margin: 0;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      #graphiql {
+        height: 100vh;
+      }
+
+      #loginForm {
+        padding: 2rem 4rem;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 1rem;
+      }
+
+      #loginForm input,
+      #loginForm button {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 1rem;
+      }
+    </style>
+
+    <!-- https://unpkg.com/react@16/umd/react.development.js -->
+    <script
+        crossorigin
+        src="/graphiql/react.development.js"
+    ></script>
+    <!-- https://unpkg.com/react-dom@16/umd/react-dom.development.js -->
+    <script
+        crossorigin
+        src="/graphiql/react-dom.development.js"
+    ></script>
+    <!--
+        These two files can be found in the npm module, however you may wish to
+        copy them directly into your environment, or perhaps include them in your
+        favored resource bundler.
+       -->
+    <!-- https://unpkg.com/graphiql/graphiql.min.css -->
+    <link rel="stylesheet" href="/graphiql/graphiql.min.css"/>
+
+  </head>
+
+  <body>
+    <div id="graphiql">
+      <div id="loginForm">
+        <h2>Beer Advisor GraphiQL</h2>
+        <label>Login: </label>
+        <input id="loginInput" type="text" name="login" value="nils"
+               onkeypress="if (event.keyCode === 13) {doLogin(); return false; }"/>
+        <button type="button" onclick="doLogin()">Login</button>
+        <p>(Users: waldemar, karl, alessa, lauren, nils)</p>
+        <p id="loginError"></p>
+      </div>
+    </div>
+    <!-- https://unpkg.com/graphiql/graphiql.min.js -->
+    <script
+        src="/graphiql/graphiql.min.js"
+        type="application/javascript"
+    ></script>
+    <script type="text/javascript" src="https://unpkg.com/graphql-ws/umd/graphql-ws.js"></script>
+
+    <!-- https://unpkg.com/graphiql-subscriptions-fetcher@0.0.2/browser/client.js -->
+    <!-- graphiql-subscriptions-fetcher with "minimal" hack to make it work with graphql-ws -->
+    <script src="/graphiql/graphiql-subscriptions-fetcher-0.0.2-for-graphql-ws.js"></script>
+
+    <script>
+      function doLogin() {
+        document.getElementById("loginError").innerHTML = "";
+        const username = document.getElementById("loginInput").value;
+        fetch("/graphql", {
+          method:  "POST",
+          headers: {
+            "Content-Type": "application/json; charset=utf-8"
+          },
+          body:    JSON.stringify({
+              operationName: "LoginFromGraphiQLMutation",
+              query:         `mutation LoginFromGraphiQLMutation($username: String!) {
+  login(username: $username) {
+    authentication {
+      userId
+      username
+      authToken
+    }
+    error
+  }
+}`,
+              variables:     { username }
+            }
+          )
+        }).then(response => response.json().then(result => {
+          if (response.ok) {
+            const login = result.data.login;
+            console.log("login", login);
+            if (login.error) {
+              document.getElementById("loginError").innerHTML = login.error;
+            } else {
+              document.getElementById("loginForm").remove();
+              runGraphiQL(login.authentication.authToken, `${login.authentication.username} (${login.authentication.userId})`);
+            }
+          } else {
+            document.getElementById("loginError").innerHTML = result.message;
+          }
+        }))
+
+      }
+
+      function runGraphiQL(authToken, username) {
+        // Defines a GraphQL fetcher using the fetch API. You're not required to
+        // use fetch, and could instead implement graphQLFetcher however you like,
+        // as long as it returns a Promise or Observable.
+        function graphQLFetcher(graphQLParams) {
+          // This example expects a GraphQL server at the path /graphql.
+          // Change this to point wherever you host your GraphQL server.
+          return fetch('/graphql', {
+            method:      'post',
+            headers:     {
+              'Accept':        'application/json',
+              'Content-Type':  'application/json',
+              'Authorization': `Bearer ${authToken}`
+            },
+            body:        JSON.stringify(graphQLParams),
+            credentials: 'include',
+          }).then(function(response) {
+            return response.text();
+          }).then(function(responseBody) {
+            try {
+              return JSON.parse(responseBody);
+            } catch (error) {
+              return responseBody;
+            }
+          });
+        }
+
+        function graphQLFetcher(graphQLParams) {
+          const headers = {
+            Accept:         'application/json',
+            'Content-Type': 'application/json',
+            Authorization:  `Bearer ${authToken}`
+          }
+          return fetch(
+            '/graphql',
+            {
+              method:      'post',
+              headers,
+              body:        JSON.stringify(graphQLParams),
+              credentials: 'omit',
+            },
+          ).then(function(response) {
+            return response.json().catch(function() {
+              return response.text();
+            });
+          });
+        }
+
+        function buildFetcher() {
+          const wsClient = graphqlWs.createClient({
+            url: `ws://localhost:9000/subscriptions`
+          });
+
+          return window.GraphiQLSubscriptionsFetcher.graphQLFetcher(wsClient, graphQLFetcher);
+        }
+
+        // Render <GraphiQL /> into the body.
+        ReactDOM.render(
+          React.createElement(GraphiQL, {
+            fetcher:                    buildFetcher(),
+            defaultQuery:               "",
+            defaultVariableEditorOpen:  true,
+            defaultSecondaryEditorOpen: true,
+            headerEditorEnabled:        true,
+          }),
+          document.getElementById('graphiql'),
+        );
+
+//        ReactDOM.render(
+//          React.createElement(GraphiQL, props, React.createElement(
+//            GraphiQL.Logo,
+//            null,
+//            `🍺 Beer Advisor - ${username} 🍺`
+//          )),
+//          document.getElementById('graphiql')
+//        );
+      }
+    </script>
+  </body>
+
+</html>
