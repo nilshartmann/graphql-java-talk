@@ -1,5 +1,4 @@
-import { QueryResult } from "@apollo/react-common";
-import { useQuery } from "@apollo/react-hooks";
+import { QueryResult, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
 import { RouteComponentProps } from "react-router";

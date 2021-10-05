@@ -1,6 +1,6 @@
 import * as React from "react";
 import { RouteComponentProps, withRouter } from "react-router";
-import styles from "./Header.module.scss";
+import styles from "./Header.module.css";
 
 interface HeaderProps extends RouteComponentProps {
   children?: React.ReactNode;

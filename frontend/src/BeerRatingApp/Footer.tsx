@@ -1,5 +1,5 @@
 import * as React from "react";
-import styles from "./Footer.module.scss";
+import styles from "./Footer.module.css";
 
 const GITHUB_REPO = "https://github.com/nilshartmann/graphql-java-talk";
 

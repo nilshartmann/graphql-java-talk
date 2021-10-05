@@ -1,5 +1,4 @@
-import { useMutation } from "@apollo/react-hooks";
-import { DataProxy } from "apollo-cache";
+import {useMutation, DataProxy} from "@apollo/client";
 import { useAuthContext } from "AuthContext";
 import gql from "graphql-tag";
 import * as React from "react";

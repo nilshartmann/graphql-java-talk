@@ -1,8 +1,8 @@
-import { useMutation } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/client";
 import { useAuthContext } from "AuthContext";
 import gql from "graphql-tag";
 import React from "react";
-import styles from "./Form.module.scss";
+import styles from "./Form.module.css";
 import { BeerPageQuery_beer } from "./querytypes/BeerPageQuery";
 import { UpdateBeerNameMutation, UpdateBeerNameMutationVariables } from "./querytypes/UpdateBeerNameMutation";
 import { isValidAuth } from "types";

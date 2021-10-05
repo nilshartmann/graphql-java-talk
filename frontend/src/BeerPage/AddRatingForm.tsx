@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NewRating } from "../types";
-import styles from "./Form.module.scss";
+import styles from "./Form.module.css";
 
 type RatingFormProps = {
   beerName: string;

@@ -1,5 +1,5 @@
 import * as React from "react";
-import styles from "./Form.module.scss";
+import styles from "./Form.module.css";
 
 interface LoginFormProps {
   error: string | null;

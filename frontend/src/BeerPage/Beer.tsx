@@ -1,6 +1,6 @@
 import React from "react";
 import AddRating from "./AddRating";
-import styles from "./Beer.module.scss";
+import styles from "./Beer.module.css";
 import { BeerPageQuery_beer as BeerData, BeerPageQuery_beer_shops as ShopData } from "./querytypes/BeerPageQuery";
 import Rating from "./Rating";
 

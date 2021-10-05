@@ -1,6 +1,6 @@
 import React from "react";
 import { ShopPageQuery_shop, ShopPageQuery_shop_address } from "./querytypes/ShopPageQuery";
-import styles from "./ShopPage.module.scss";
+import styles from "./ShopPage.module.css";
 
 type ShopProps = {
   shop: ShopPageQuery_shop;

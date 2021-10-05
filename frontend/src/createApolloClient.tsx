@@ -1,14 +1,61 @@
-import { InMemoryCache } from "apollo-cache-inmemory";
-import { ApolloClient } from "apollo-client";
-import { ApolloLink, split } from "apollo-link";
-import { setContext } from "apollo-link-context";
-import { onError } from "apollo-link-error";
-import { HttpLink } from "apollo-link-http";
-import { WebSocketLink } from "apollo-link-ws";
-import { getMainDefinition } from "apollo-utilities";
+
+import {
+	ApolloClient, ApolloLink, FetchResult, HttpLink,
+	InMemoryCache, Observable, Operation, split,
+} from "@apollo/client";
+
 import { getAuthToken, setAuthToken } from "./AuthContext";
+import { print, GraphQLError } from 'graphql';
+import { createClient, ClientOptions, Client } from 'graphql-ws';
+import {getMainDefinition} from "@apollo/client/utilities";
+import {onError} from "@apollo/client/link/error";
+import {setContext} from "@apollo/client/link/context";
+import {WebSocketLink} from "@apollo/client/link/ws";
 
 const isLocalDev = window.location.hostname === "localhost";
+
+class GraphQLWsWebSocketLink extends ApolloLink {
+	private client: Client;
+
+	constructor(options: ClientOptions) {
+		super();
+		this.client = createClient(options);
+	}
+
+	public request(operation: Operation): Observable<FetchResult> {
+		return new Observable((sink) => {
+			return this.client.subscribe<FetchResult>(
+				{ ...operation, query: print(operation.query) },
+				{
+					next: sink.next.bind(sink),
+					complete: sink.complete.bind(sink),
+					error: (err) => {
+						if (err instanceof Error) {
+							return sink.error(err);
+						}
+
+						if (err instanceof CloseEvent) {
+							return sink.error(
+								// reason will be available on clean closes
+								new Error(
+									`Socket closed with event ${err.code} ${err.reason || ''}`,
+								),
+							);
+						}
+
+						return sink.error(
+							new Error(
+								(err as GraphQLError[])
+									.map(({ message }) => message)
+									.join(', '),
+							),
+						);
+					},
+				},
+			);
+		});
+	}
+}
 
 export default function createApolloClient() {
   const httpLink = new HttpLink({
@@ -16,12 +63,22 @@ export default function createApolloClient() {
     credentials: "include",
   });
 
-  const wsLink = new WebSocketLink({
-    uri: isLocalDev ? "ws://localhost:9000/subscriptions" : `ws://${window.location.host}/subscriptions`,
-    options: {
-      reconnect: true,
-    },
-  });
+	let lib = process.env.REACT_APP_GRAPHQL_LIB;
+
+	console.log("USING SUBSCRIPTION LIB " + lib)
+
+	const wsLink = lib === "graphql-ws" ? new GraphQLWsWebSocketLink({
+		url:isLocalDev ? "ws://localhost:9000/subscriptions" : `ws://${window.location.host}/subscriptions`,
+		connectionParams: () => {
+			return {}
+		},
+	}): new WebSocketLink({
+		uri: isLocalDev ? "ws://localhost:9000/subscriptions" : `ws://${window.location.host}/subscriptions`,
+		options: {
+			reconnect: true,
+		},
+	});
+
 
   // using the ability to split links, you can send data to each link
   // depending on what kind of operation is being sent

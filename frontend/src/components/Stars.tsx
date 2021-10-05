@@ -1,5 +1,5 @@
 import * as React from "react";
-import styles from "./Stars.module.scss";
+import styles from "./Stars.module.css";
 
 export default function Stars({ stars }: { stars: number }) {
   const x = new Array(5).fill(undefined).map((_, ix) => (
