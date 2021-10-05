@@ -10,10 +10,11 @@ import { createClient, ClientOptions, Client } from 'graphql-ws';
 import {getMainDefinition} from "@apollo/client/utilities";
 import {onError} from "@apollo/client/link/error";
 import {setContext} from "@apollo/client/link/context";
+import {WebSocketLink} from "@apollo/client/link/ws";
 
 const isLocalDev = window.location.hostname === "localhost";
 
-class WebSocketLink extends ApolloLink {
+class GraphQLWsWebSocketLink extends ApolloLink {
 	private client: Client;
 
 	constructor(options: ClientOptions) {
@@ -62,27 +63,22 @@ export default function createApolloClient() {
     credentials: "include",
   });
 
+	let lib = process.env.REACT_APP_GRAPHQL_LIB;
 
-	const wsLink = new WebSocketLink({
+	console.log("USING SUBSCRIPTION LIB " + lib)
+
+	const wsLink = lib === "graphql-ws" ? new GraphQLWsWebSocketLink({
 		url:isLocalDev ? "ws://localhost:9000/subscriptions" : `ws://${window.location.host}/subscriptions`,
 		connectionParams: () => {
 			return {}
-			// const session = getSession();
-			// if (!session) {
-			// 	return {};
-			// }
-			// return {
-			// 	Authorization: `Bearer ${session.token}`,
-			// };
+		},
+	}): new WebSocketLink({
+		uri: isLocalDev ? "ws://localhost:9000/subscriptions" : `ws://${window.location.host}/subscriptions`,
+		options: {
+			reconnect: true,
 		},
 	});
 
-  // const wsLink = new WebSocketLink({
-	//   uri: isLocalDev ? "ws://localhost:9000/subscriptions" : `ws://${window.location.host}/subscriptions`,
-	//   options: {
-	//     reconnect: true,
-	//   },
-	// });
 
   // using the ability to split links, you can send data to each link
   // depending on what kind of operation is being sent
