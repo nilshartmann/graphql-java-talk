@@ -1,11 +1,5 @@
 package nh.graphql.beeradvisor.graphql;
 
-//import io.reactivex.BackpressureStrategy;
-//import io.reactivex.Flowable;
-//import io.reactivex.Observable;
-//import io.reactivex.ObservableEmitter;
-//import io.reactivex.observables.ConnectableObservable;
-
 import nh.graphql.beeradvisor.domain.Rating;
 import nh.graphql.beeradvisor.domain.RatingCreatedEvent;
 import org.slf4j.Logger;
@@ -35,7 +29,7 @@ public class RatingPublisher {
   }
 
   @TransactionalEventListener
-  public void onNewVisit(RatingCreatedEvent event) {
+  public void onNewRating(RatingCreatedEvent event) {
     logger.info("onNewRating {}", event);
     if (this.emitter != null) {
       this.emitter.next(event.getRating());
@@ -49,35 +43,4 @@ public class RatingPublisher {
   public Flux<Rating> getPublisher(String beerId) {
     return this.publisher.filter(rating -> beerId.equals(rating.getBeer().getId()));
   }
-
-//
-//  private ObservableEmitter<Rating> emitter;
-//  private final Flowable<Rating> publisher;
-//
-//  public RatingPublisher() {
-//    Observable<Rating> ratingObservable = Observable.create(emitter -> {
-//      this.emitter = emitter;
-//    });
-//    ConnectableObservable<Rating> connectableObservable = ratingObservable.share().publish();
-//    connectableObservable.connect();
-//
-//    this.publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
-//  }
-//
-//  @TransactionalEventListener
-//  public void ratingCreated(RatingCreatedEvent ratingCreatedEvent) {
-//    logger.info("Received RatingCreatedEvent " + ratingCreatedEvent);
-//    if (this.emitter != null) {
-//      this.emitter.onNext(ratingCreatedEvent.getRating());
-//    }
-//  }
-//
-//  public Flowable<Rating> getPublisher() {
-//    return this.publisher;
-//  }
-//
-//  public Flowable<Rating> getPublisher(String beerId) {
-//    return this.publisher.filter(rating -> beerId.equals(rating.getBeer().getId()));
-//  }
-
 }
