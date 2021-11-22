@@ -1,51 +1,49 @@
-buildscript {
-  ext {
-    springBootVersion = '2.3.0.RELEASE'
-  }
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-  }
+plugins {
+  id 'org.springframework.boot' version '2.5.6'
+  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+  id 'java'
 }
-
-apply plugin: 'java'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
 
 group = 'nh.graphql.beeradvisor'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 11
+sourceCompatibility = '11'
 
 repositories {
   mavenCentral()
-  jcenter()
 }
 
 
 dependencies {
-  compile('org.springframework.boot:spring-boot-starter-validation')
-  compile('org.springframework.boot:spring-boot-starter-data-jpa')
-  compile('org.springframework.boot:spring-boot-starter-web')
-  compile('org.springframework.boot:spring-boot-starter-websocket')
-  compile('org.springframework.boot:spring-boot-starter-security')
-  runtime('com.h2database:h2')
-	runtime('org.postgresql:postgresql')
-  testCompile('org.springframework.boot:spring-boot-starter-test')
-  testCompile('io.rest-assured:rest-assured:3.3.0')
-  testCompile('com.jayway.jsonpath:json-path-assert:2.2.0')
+  implementation 'org.springframework.boot:spring-boot-starter-validation'
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-security'
+
+  implementation 'org.springframework.boot:spring-boot-starter-websocket'
+  developmentOnly 'org.springframework.boot:spring-boot-devtools'
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+  runtimeOnly 'com.h2database:h2'
+  runtimeOnly 'org.postgresql:postgresql'
+
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testImplementation 'io.rest-assured:rest-assured:3.3.0'
+  testImplementation 'com.jayway.jsonpath:json-path-assert:2.2.0'
 
 
   // security
-  compile 'io.jsonwebtoken:jjwt-api:0.10.1'
-  runtime 'io.jsonwebtoken:jjwt-impl:0.10.1',
+  implementation 'io.jsonwebtoken:jjwt-api:0.10.1'
+  runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.10.1',
       'io.jsonwebtoken:jjwt-jackson:0.10.1'
 
   // GraphQL (rxjava for Subscriptions)
-  compile "io.reactivex.rxjava2:rxjava:2.1.5"
+  implementation "io.reactivex.rxjava2:rxjava:2.1.5"
 
   // GraphQL java-tools
   implementation 'com.graphql-java-kickstart:graphql-spring-boot-starter:8.0.0'
+}
+
+test {
+  useJUnitPlatform()
 }
 

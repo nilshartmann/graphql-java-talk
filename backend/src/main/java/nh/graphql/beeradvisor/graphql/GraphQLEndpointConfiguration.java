@@ -94,7 +94,7 @@ public class GraphQLEndpointConfiguration {
 
     // --- SERVLET --------------------------------------------------------------------------------------------------
     @Bean
-    ServletRegistrationBean<GraphQLHttpServlet> graphQLServletRegistrationBean(GraphQLSchema schema, BeerAdvisorDataLoaderConfigurer dataLoaderConfigurer) {
+    ServletRegistrationBean<GraphQLHttpServlet> graphQLServletRegistrationBean(final GraphQLSchema schema, BeerAdvisorDataLoaderConfigurer dataLoaderConfigurer) {
 
         GraphQLConfiguration config = GraphQLConfiguration
             .with(schema)
@@ -103,7 +103,7 @@ public class GraphQLEndpointConfiguration {
                 .build())
             .with(new BeerAdvisorContextBuilder(dataLoaderConfigurer))
             .with(GraphQLQueryInvoker.newBuilder()
-                .withInstrumentation(new CustomInstrumentation())
+//                .withInstrumentation(new CustomInstrumentation())
                 .build())
             .build();
 
@@ -208,7 +208,7 @@ public class GraphQLEndpointConfiguration {
         }
 
         @Override
-        public InstrumentationContext<ExecutionResult> beginExecution(InstrumentationExecutionParameters parameters) {
+        public InstrumentationContext<ExecutionResult> beginExecution(final InstrumentationExecutionParameters parameters) {
             long startNanos = System.currentTimeMillis();
             return new SimpleInstrumentationContext<ExecutionResult>() {
                 @Override

@@ -1,16 +1,19 @@
 plugins {
-  id 'org.springframework.boot' version '2.5.6'
+  id 'org.springframework.boot' version '2.5.7'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'java'
 }
 
-group = 'com.example'
+group = 'nh.graphql.beeradvisor'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 repositories {
   mavenCentral()
+  maven { url 'https://repo.spring.io/milestone' }  // Spring milestones
+  maven { url 'https://repo.spring.io/snapshot' }   // Spring snapshots
 }
+
 
 dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -23,11 +26,11 @@ dependencies {
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
   // Spring GraphQL Boot starter
   implementation 'org.springframework.experimental:graphql-spring-boot-starter:1.0.0-SNAPSHOT'
+  testImplementation 'org.springframework.graphql:spring-graphql-test:1.0.0-SNAPSHOT'
 
   runtimeOnly 'com.h2database:h2'
   runtimeOnly 'org.postgresql:postgresql'
 
-  testImplementation 'org.springframework.boot:spring-boot-starter-test'
   testImplementation 'io.rest-assured:rest-assured:3.3.0'
   testImplementation 'com.jayway.jsonpath:json-path-assert:2.2.0'
 
@@ -43,8 +46,3 @@ test {
   useJUnitPlatform()
 }
 
-repositories {
-  mavenCentral()
-  maven { url 'https://repo.spring.io/milestone' }  // Spring milestones
-  maven { url 'https://repo.spring.io/snapshot' }   // Spring snapshots
-}
