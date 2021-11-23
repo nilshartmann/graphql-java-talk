@@ -1,0 +1,10 @@
+type Greeting {
+    name: String!
+    msg: String!
+
+    greeting: String!
+}
+
+extend type Query {
+    hello(name: String!, msg: String!): Greeting!
+}

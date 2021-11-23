@@ -15,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,6 +24,11 @@ import java.util.List;
  */
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private static final List<SimpleGrantedAuthority> ROLE_USER = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+  private static final List<SimpleGrantedAuthority> ROLE_GREETER = Arrays.asList(
+    new SimpleGrantedAuthority("ROLE_USER"),
+    new SimpleGrantedAuthority("ROLE_GREETER")
+    );
+
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
   @Autowired
@@ -74,8 +80,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         throw new BadCredentialsException("Invalid User in Token");
       }
 
+
       UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null,
-          ROLE_USER);
+          "karl".equals(user.getLogin()) ? ROLE_GREETER : ROLE_USER);
       SecurityContextHolder.getContext().setAuthentication(authentication);
     }
   }

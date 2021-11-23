@@ -1,0 +1,28 @@
+package nh.graphql.beeradvisor.domain;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.GraphQlController;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class GreetingController {
+
+
+  @QueryMapping
+  public Greeting hello(@Argument String msg, @Argument String name) {
+    return new Greeting(name, msg);
+  }
+
+  @PreAuthorize("hasRole('ROLE_GREETER')")
+  @SchemaMapping
+  public String greeting(Greeting greeting) {
+
+    return greeting.getName() + greeting.getMsg();
+
+  }
+
+}
